@@ -5,10 +5,10 @@ from scipy import stats
 
 class SerialCicDistribution:
 
-    """A Distribution modelling the Serial CIC in the EMCCD
+    """A distribution modelling the Serial CIC in the EMCCD
 
-    The distibution consists of a sum of exponential PDF, each scaled by a regisiter,
-    modelling probabaility  he single sCIC event could happen in any of the registers
+    The distibution consists of a sum of exponential PDFs, each scaled by a regisiter,
+    modelling probabaility a single sCIC event could happen in any of the registers
 
     """
     def __init__(self, **kwargs):
@@ -80,8 +80,8 @@ class EmccdModelParameters:
             distribution.
         sigma (float): the scale parameter and the standard deviation
             of the gaussian distribution.
-        proportion (float): the proportion of the data that is likelier
-            to be gaussian.
+        proportion_pcic (float): proportion of data caused by parallel clock induced charge
+        proportion_scic (float): proportion of data caused by serial clock induced charge   
         exp_loc (float): the location of the start of the exponential
             distribution and the SCiC distribution.
     """
@@ -347,7 +347,7 @@ class EmccdModelMixture:
             print(self.parameters_updated)
         self._sync_parameters()
 
-    def logpdf(self, val):
+    def logpdf(self, val)-> float:
         """Evaluates the density of the logpdf of the EmccdModelMixture.
         """
         weighted_log_gaussian_density = np.log(1-self.parameters.proportion_scic
@@ -358,7 +358,7 @@ class EmccdModelMixture:
                                    weighted_log_scic_density))
         return log_density
 
-    def pdf(self, val):
+    def pdf(self, val) -> float:
         """Evaluates the density of the pdf of the GaussianExponentialMixture.
         """
         return np.exp(self.logpdf(val))
